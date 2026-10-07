@@ -101,9 +101,10 @@ and stop. Otherwise take the first result and go to suggest_outfit.
 
 **Where it lives:** `agent.py::run_agent`
 
-**How the query is parsed:** <!-- regex, string splitting, or asking the model — say which -->
+**How the query is parsed:** Using regex to catch $# for price, & something to capture sizes.
 
-**What moves through the session:** <!-- which fields, in what order -->
+**What moves through the session:** run_agent pasess the query & wardrobe dict, gives parsed result from query into search_listinngs, search_listings puts matching results in session["search_results"],then puts first matched into session['selected_item'], then passes it into suggest_outfit() and gets outfit suggestion (session["outfit_suggestion"]),
+outfit suggestion passed to create_fit_card(), & store resulting caption in session['fit_card']
 
 ---
 
