@@ -96,7 +96,8 @@ The agent will then be called to run 3 tools in response. IT will first get best
      The grader checks your code against what you claim here, so the file and
      function have to be real. -->
 
-**Branch rule:**
+**Branch rule**: If search_listings returns an empty list, put a message in the session
+and stop. Otherwise take the first result and go to suggest_outfit.
 
 **Where it lives:** `agent.py::run_agent`
 
