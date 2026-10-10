@@ -57,8 +57,11 @@ in the tools when the problem resulted from how we pass things along tools.
 ## 4. The fit card gives a unique, structured response almost every time
 
 Given a valid outfit suggestion, the fit card should provide a unique caption, compared
-mainly by different outfit suggestion combinations, structured as such. Starts with a line or two
-mentioning each item with its price & brand (if applicable), and then a line or two to describe
+mainly by different outfit suggestion combinations, as well as different wording & phrases.
+For comparison, start with string comparison before using regex to compare keywords, such as outfits suggested
+& description of its vibe.
+
+Starts with a line or two mentioning each item with its price & brand (if applicable), and then a line or two to describe
 overall vibe of the outfit (ie what style does it represent or what feeling does it evoke to other people
 seeing someone dressed like this) — should be at least 4 out of 5 times.
 
