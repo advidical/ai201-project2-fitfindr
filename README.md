@@ -101,7 +101,7 @@ and stop. Otherwise take the first result and go to suggest_outfit.
 
 **Where it lives:** `agent.py::run_agent`
 
-**How the query is parsed:** Using regex to catch $# for price, & something to capture sizes.
+**How the query is parsed:** Using string splitting to catch $# for price, & something to capture sizes.
 
 **What moves through the session:** run_agent pasess the query & wardrobe dict, gives parsed result from query into search_listinngs, search_listings puts matching results in session["search_results"],then puts first matched into session['selected_item'], then passes it into suggest_outfit() and gets outfit suggestion (session["outfit_suggestion"]),
 outfit suggestion passed to create_fit_card(), & store resulting caption in session['fit_card']
@@ -129,15 +129,31 @@ $ python -c "from tools import search_listings; print(search_listings('graphic t
 
 ```
 
+[{'id': 'lst_006', 'title': 'Graphic Tee — 2003 Tour Bootleg Style', 'description': 'Vintage-style bootleg tee with faded graphic. Slightly boxy fit. 100% cotton, soft and worn-in.', 'category': 'tops', 'style_tags': ['graphic tee', 'vintage', 'grunge', 'streetwear', 'band tee'], 'size': 'L', 'condition': 'good', 'price': 24.0, 'colors': ['black'], 'brand': None, 'platform': 'depop'},
+
+{'id': 'lst_002', 'title': 'Y2K Baby Tee — Butterfly Print', 'description': 'Super cute early 2000s baby tee with butterfly graphic. Fitted crop length. Tag says medium but fits like a small.', 'category': 'tops', 'style_tags': ['y2k', 'vintage', 'graphic tee', 'cottagecore'], 'size': 'S/M', 'condition': 'excellent', 'price': 18.0, 'colors': ['white', 'pink', 'purple'], 'brand': None, 'platform': 'depop'},
+
+{'id': 'lst_033', 'title': 'Vintage Band Tee — Faded Grey', 'description': 'Faded grey band-style tee with distressed graphic. Crew neck. Fits boxy. Well-loved but no holes or major damage.', 'category': 'tops', 'style_tags': ['vintage', 'grunge', 'band tee', 'graphic tee', 'streetwear'], 'size': 'L', 'condition': 'fair', 'price': 19.0, 'colors': ['grey', 'charcoal'], 'brand': None, 'platform': 'depop'}]
+
 ```
 $ python -c "from tools import suggest_outfit; ..."
 
 ```
 
+Outfit 1
+Pair the Vintage Levi's 501 Jeans — Medium Wash with your White ribbed tank top, Black cropped zip hoodie worn unzipped over top, and Chunky white sneakers. Add your Black crossbody bag.
+Vibe: Casual, streetwear-inspired sporty-cool.
+
+Outfit 2
+Pair the Vintage Levi's 501 Jeans — Medium Wash with your Oversized grey crewneck sweatshirt tucked in, and Brown leather belt cinching the waist. Finish with your Black combat boots and Black crossbody bag.
+Vibe: Cozy, effortless vintage everyday.
+
 ```
 $ python -c "from tools import create_fit_card; ..."
 
 ```
+
+Found these vintage Levi's 501 jeans on Depop for $38 and they finally give me that perfectly worn-in, slightly slouchy 90s silhouette I've been hunting for. Throwing them on with crisp white sneakers for running errands and grabbing iced coffee this weekend. Honestly thrilled to stop gatekeeping my denim search. 👖
 
 ---
 
@@ -151,16 +167,16 @@ $ python -c "from tools import create_fit_card; ..."
      instead of an empty list, so I changed it" is the level we want. -->
 
 **Moment 1**
-
-- _What I asked for:_
-- _What came back:_
-- _What I changed:_
+I gave Claude my specs for search_listings and any work I did on my own.
+It gave me usable code that worked on my runs, but I reformatted them to
+move utilily globals & functions into a util py files, and I did some cleaning up,
+such as handling the empty list case when no matches return
 
 **Moment 2**
-
-- _What I asked for:_
-- _What came back:_
-- _What I changed:_
+I gave claude my specs and progress code for suggest_outfits() & create_fit_card().
+It gave me functional code using util functions that formatted my prompts and system prompts
+for each function. After reviewing the code, I moved the util functions & system prompts into
+a separate util py file for code cleaniness.
 
 <!-- ═══════════════════════ UNIT 4 — THE TEST ═══════════════════════
 

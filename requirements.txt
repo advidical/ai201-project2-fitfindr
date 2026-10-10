@@ -22,3 +22,6 @@ flask>=3.0,<4.0
 # How a host runs serve.py: `gunicorn serve:app`. Also unit 9 — nothing before
 # then uses it, and you never need to run it on your own machine.
 gunicorn>=21.2,<24.0
+
+# Added nltk tokenizer for this project 
+nltk>=3.10.3,<3.11
