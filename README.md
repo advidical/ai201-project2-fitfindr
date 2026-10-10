@@ -118,9 +118,21 @@ outfit suggestion passed to create_fit_card(), & store resulting caption in sess
 **One full query**
 
 ```
-$ python app.py ask '...'
+$ python app.py ask 'platform sneakers size 8'
 
 ```
+
+Found: Platform Sneakers — White Chunky Sole — $48.0 on poshmark
+
+Outfit: Outfit 1:
+White ribbed tank top + Baggy straight-leg jeans, dark wash + Platform Sneakers — White Chunky Sole + Black crossbody bag
+Vibe: Effortless, early-2000s model-off-duty streetwear.
+
+Outfit 2:
+Oversized grey crewneck sweatshirt + Baggy straight-leg jeans, dark wash + Platform Sneakers — White Chunky Sole
+Vibe: Cozy, skater-inspired retro casual.
+
+Fit card: Scored these chunky white platform sneakers on Poshmark for just $48, and I’m already living in them for that early-2000s model-off-duty streetwear look. They give baggy dark-wash jeans and a ribbed tank the exact right amount of height without trying too hard. Plus, throw on an oversized grey crewneck and you've got the ultimate retro skater vibe 👟
 
 **The three tools, tested one at a time**
 

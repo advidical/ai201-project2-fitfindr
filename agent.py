@@ -97,6 +97,8 @@ def run_agent(query: str, wardrobe: dict) -> dict:
         if lower == 'size' and i + 1 < len(tokens):
             size = tokens[i+1].strip(",.;")
             i+=2
+            continue
+        
         if lower == 'under' and i + 1 < len(tokens):
             price_token = tokens[i + 1].replace("$", "").strip(",.;")
             try:
@@ -104,6 +106,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
             except ValueError:
                 pass
             i+=2
+            continue
 
         # accounting for money amount at front of query
         if lower.startswith("$"):
