@@ -199,8 +199,8 @@ a separate util py file for code cleaniness.
 
 ## Incorporate MCP
 
-```python app.py ask 'vintage graphic tee under $30'
-
+```
+python app.py ask 'vintage graphic tee under $30'
 ```
 
 **search_listing() function**
@@ -334,10 +334,9 @@ No criterion was missed. Every criterion passed on all five tries, so there is n
 
 **Happy path**
 
-````
-
-```python app.py ask 'silk slip dress in midi length under $40' --empty-wardrobe –trace
-````
+```
+python app.py ask 'silk slip dress in midi length under $40' --empty-wardrobe –trace
+```
 
 ```
 (running with an empty wardrobe)
@@ -369,8 +368,8 @@ Vibe: Easy, everyday 90s streetwear.
 
 **Empty search**
 
-```python app.py ask 'platform sneakers size 11' --trace
-
+```
+python app.py ask 'platform sneakers size 11' --trace
 ```
 
 ```
