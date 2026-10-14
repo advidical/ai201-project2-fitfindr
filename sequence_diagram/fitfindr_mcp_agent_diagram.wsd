@@ -1,0 +1,12 @@
+title fitfitr
+Terminal (end user)->+agent.py (harness): Enter query and wardrobe
+agent.py (harness)->agent.py (harness): Parse query into description, size, and max_price
+agent.py (harness)->+MCP client: call_tool("search_listings", arguments)
+MCP client->+MCP server: Start server over stdio and request search_listings
+MCP server->MCP server: Run search_listings against listings data
+MCP server-->-MCP client: Return matching listing dictionaries
+MCP client-->-agent.py (harness): Unwrap and return search results
+note right of agent.py (harness): If results are empty, create an error message and stop before outfit tools
+agent.py (harness)->agent.py (harness): Select first listing; suggest outfit; create fit card
+agent.py (harness)-->-Terminal (end user): Return session with fit card or actionable no-results message
+

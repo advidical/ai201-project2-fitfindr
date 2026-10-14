@@ -213,7 +213,7 @@ def create_fit_card(outfit: str, new_item: dict) -> str:
         "Here is how I plan to style it:\n"
         f"{outfit.strip()}\n\n"
         "Write my post caption. Rules:\n"
-        "- 2 to 4 sentences, first person, casual.\n"
+        "- 2 to 4 sentences, first person, casual & personal.\n"
         "- Mention the item, the price and the platform exactly once each.\n"
         "- Be specific about the vibe of the outfit; don't use generic filler "
         "like 'obsessed' or 'so cute' as the whole point.\n"

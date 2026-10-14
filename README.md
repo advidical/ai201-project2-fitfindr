@@ -197,6 +197,47 @@ a separate util py file for code cleaniness.
 
 ---
 
+## Incorporate MCP
+
+```python app.py ask 'vintage graphic tee under $30'
+
+```
+
+**search_listing() function**
+
+```
+Found: Graphic Tee — 2003 Tour Bootleg Style — $24.0 on depop, size : L
+Outfit: Outfit One
+
+Pair the Graphic Tee — 2003 Tour Bootleg Style with the Baggy straight-leg jeans, dark wash, and the Black combat boots. Add the Black crossbody bag and the Vintage black denim jacket on top.
+Vibe: 90s grunge streetwear, effortless and moody.
+
+Outfit Two
+
+Layer the White ribbed tank top under the Graphic Tee — 2003 Tour Bootleg Style (letting the white hem peek out), tucked into the Wide-leg khaki trousers worn with the Brown leather belt. Finish with the Chunky white sneakers.
+Vibe: Skater-meets-minimalist thrifted casual.
+
+Fit card: Scored this 2003 tour bootleg graphic tee on Depop for twenty-four bucks and I'm already picturing it under a vintage denim jacket with combat boots for that moody 90s grunge streetwear look. 💀
+```
+
+**mcp_client.call_tool('search_listing', Params:Dict)**
+
+```
+Found: Graphic Tee — 2003 Tour Bootleg Style — $24.0 on depop, size : L
+Outfit: Outfit 1
+Wear the graphic tee with the baggy straight-leg jeans, the brown leather belt, the black combat boots, and the black crossbody bag.
+Vibe: 90s grunge streetwear with a worn-in, effortless edge.
+
+Outfit 2
+Layer the black cropped zip hoodie unzipped over the graphic tee, paired with the wide-leg khaki trousers, the chunky white sneakers, and the black crossbody bag.
+Vibe: Casual streetwear mixing faded rock aesthetics with sharp earth tones.
+
+Fit card: Scored this 2003 tour bootleg graphic tee on Depop for $24 and I'm already planning two ways to wear it. First up is straight-leg jeans, combat boots, and a leather belt for that heavy 90s grunge streetwear feel. Or I'll layer it under an unzipped black hoodie with khaki trousers and chunky sneakers to mix faded rock aesthetics with sharp earth tones. 🎸
+```
+
+**Conclusion**
+Gets the same outfit, just generates different outfit combinations & captions
+
 ## Run Log — Before
 
 <!-- Five criteria, five tries each, in this exact format.
@@ -269,17 +310,59 @@ that produced it:
 
 **Happy path**
 
+````
+
+```python app.py ask 'silk slip dress in midi length under $40' --empty-wardrobe –trace
+````
+
 ```
+(running with an empty wardrobe)
+
+  Found:    90s Silk Slip Dress — Floral, Midi Length — $30.0 on depop,  size : M
+  Outfit:   Outfit 1: Grunge Contrast
+Layer an oversized black knit cardigan over the slip dress and pair with chunky black combat boots.
+Vibe: 90s Courtney Love grunge meets delicate romance.
+
+Outfit 2: Casual Layering
+Wear a plain white fitted t-shirt underneath the slip dress and finish with white canvas low-top sneakers.
+Vibe: Easy, everyday 90s streetwear.
+
+  Fit card: Just scored this floral midi 90s silk slip dress on Depop for thirty bucks and I am totally channeling Courtney Love with an oversized black knit cardigan and chunky combat boots. For a more casual streetwear vibe, I'm definitely throwing a white fitted tee underneath and pairing it with low-top sneakers. 🖤
+
+[1] call_tool
+      in:  tool: search_listings, params='description, size, max_price'
+      out: 90s Silk Slip Dress — Floral, Midi Length ($30.0, depop)
+[2] suggest_outfit
+      in:  dict with keys: selected_item, wardrobe
+      out: Outfit 1: Grunge Contrast Layer an oversized black knit cardigan over the slip dress and pair with chunky blac…
+      →    Branch: No wardrobe, give general styling advice
+[3] suggest_outfit
+      in:  dict with keys: selected_item, wardrobe
+      out: Outfit 1: Grunge Contrast Layer an oversized black knit cardigan over the slip dress and pair with chunky blac…
+2 model calls this session, 455 prompt + 148 output tokens
 
 ```
 
 **Empty search**
 
-```
+```python app.py ask 'platform sneakers size 11' --trace
 
 ```
 
-**On the MCP move:** <!-- what changed in your code, and whether anything
+```
+  No items matched 'platform sneakers' in size 11. Try a broader description, a different size, or a higher price cap.
+
+[1] call_tool
+      in:  tool: search_listings, params='description, size, max_price'
+      →    branch: empty, stopping
+0 model calls this session
+```
+
+**On the MCP move:**
+It worked from what I could tell, acted pretty much the same. I just changed the call to
+mcp.call_tool with the tool and its params, and added my trace steps
+
+<!-- what changed in your code, and whether anything
 behaved differently afterwards. If the rewire didn't work, say exactly where it
 broke — the error text and the last thing that worked. That earns the point in
 full. -->

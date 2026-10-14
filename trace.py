@@ -61,7 +61,7 @@ def step(name: str, inputs=None, returned=None, note: str = "") -> None:
         line += f"\n      →    {note}"
 
     _lines.append(line)
-    print(line, flush=True)
+    # print(line, flush=True)
 
 
 def get_trace() -> str:
@@ -84,6 +84,10 @@ def _short(value, limit: int = 110) -> str:
     if isinstance(value, dict):
         if "title" in value:
             return f"{value.get('title')} (${value.get('price')}, {value.get('platform')})"
+        if 'tool' in value:
+            params = ', '.join([v for v in value if v != 'tool'])
+            return f"tool: {value.get('tool')}, {params=}"
+        
         keys = ", ".join(list(value)[:6])
         return f"dict with keys: {keys}"
 

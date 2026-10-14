@@ -118,8 +118,8 @@ def _ask_one(query, wardrobe, use_trace):
         print(f"  {session['error']}")
     else:
         item = session["selected_item"] or {}
-        print(f"  Found:    {item.get('title')} — ${item.get('price')} on {item.get('platform')}")
-        print()
+        print(f"  Found:    {item.get('title')} — ${item.get('price')} on {item.get('platform')},", end='')
+        print(f"  size : {item.get('size')}", end="\n")
         print(f"  Outfit:   {session['outfit_suggestion']}")
         print()
         print(f"  Fit card: {session['fit_card']}")
@@ -132,6 +132,9 @@ def _ask_one(query, wardrobe, use_trace):
                 "  (--trace printed nothing. You haven't added trace.step() calls to\n"
                 "   run_agent() yet — that's unit 4, Milestone 2.)\n"
             )
+        else:
+            print(text)
+            
     return session
 
 
