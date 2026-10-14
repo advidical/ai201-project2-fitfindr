@@ -48,7 +48,7 @@ SCENARIOS = [
     {
     # Make sure state of seleted item is consistent across tool calls
         "name": "state of selected item",
-        "query": "silk slip dress in midi length under $40",
+        "query": "90s track jacket in size M",
         "wardrobe": "example",
         "criterion": 3,
     },
@@ -61,8 +61,8 @@ SCENARIOS = [
     },
     {
     # Make sure query never lists an item above price ceiling
-        "name": "Fit card gives unique, structured repsonse",
-        "query": "silk slip dress in midi length under $40",
+        "name": "Item always respects price ceiling",
+        "query": "Vintage Blazer size L under $50",
         "wardrobe": "example",
         "criterion": 5,
     }

@@ -170,13 +170,15 @@ def run_agent(query: str, wardrobe: dict) -> dict:
         # 7. Call create_fit_card() with the outfit and the item.
         #    Put the result in session["fit_card"].
         session['fit_card'] = create_fit_card(session["outfit_suggestion"], session["selected_item"])
+        fit_params = get_params(['outfit_suggestion', 'selected_item'], session["outfit_suggestion"], session["selected_item"])
+        trace.step('create_fit_card', fit_params, session["fit_card"])
 
-    except ModelUnavailable:
-        print("I'm sorry, but the model is not available. Reason: API key invalid")
-        session['error'] = (
-                "ModelUnavailable: The model rejected your API key."
-                "Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com."
-        )
+    except ModelUnavailable as e:
+        import traceback
+        print("I'm sorry, but the model is not available. See trace below for more info: ")
+        traceback.print_exc()
+        session['error'] = traceback.format_exc() + \
+            "Check GEMINI_API_KEY in your .env file, or create a fresh key at aistudio.google.com."
     # 8. Return the session.
     return session
 
