@@ -35,8 +35,6 @@ SCENARIOS = [
         "wardrobe": "empty",
         "criterion": None,
     },
-    # TODO: add what your criteria 3, 4 and 5 need.
-    #
     # Set "criterion" to the number in criteria.md that the scenario tests.
     # "criterion": None means a diagnostic run — useful to have, but it isn't
     # one of your five, and run_eval.py marks it as such in the table.
@@ -47,6 +45,27 @@ SCENARIOS = [
     # For a fit-card criterion, you probably want the SAME query listed more
     # than once, or several different items, depending on what your criterion
     # actually says.
+    {
+    # Make sure state of seleted item is consistent across tool calls
+        "name": "state of selected item",
+        "query": "silk slip dress in midi length under $40",
+        "wardrobe": "example",
+        "criterion": 3,
+    },
+    {
+        # Fit card gives unique, structured response almost every time
+        "name": "Fit card gives unique, structured responses",
+        "query": "silk slip dress in midi length under $40",
+        "wardrobe": "example",
+        "criterion": 4,
+    },
+    {
+    # Make sure query never lists an item above price ceiling
+        "name": "Fit card gives unique, structured repsonse",
+        "query": "silk slip dress in midi length under $40",
+        "wardrobe": "example",
+        "criterion": 5,
+    }
 ]
 
 WARDROBES = ("example", "empty")
