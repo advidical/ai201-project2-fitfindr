@@ -61,8 +61,8 @@ SCENARIOS = [
     },
     {
     # Make sure query never lists an item above price ceiling
-        "name": "Item always respects price ceiling",
-        "query": "Vintage Blazer size L under $50",
+        "name": "Item gets best match based on description, ties go to cheaper item",
+        "query": "Vintage Jeans under $50",
         "wardrobe": "example",
         "criterion": 5,
     }

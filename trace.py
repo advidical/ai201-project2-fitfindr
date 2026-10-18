@@ -30,6 +30,13 @@ import config
 _lines: list[str] = []
 _step_number = 0
 
+def price_repr(listing:dict, price_key:str='price'):
+    return "$" + f"{listing.get(price_key)}" if listing.get(price_key) else None
+
+def listing_repr(listing:dict):
+    return (f"{listing.get('title')} ({price_repr(listing)}, {listing.get('size', 'No size')}"
+            f", {listing.get('platform')})")
+
 
 def start_trace() -> None:
     """Clear the trace. Call this at the start of each run."""
@@ -83,11 +90,14 @@ def _short(value, limit: int = 110) -> str:
 
     if isinstance(value, dict):
         if "title" in value:
-            return f"{value.get('title')} (${value.get('price')}, {value.get('platform')})"
-        if 'tool' in value:
-            params = ', '.join([v for v in value if v != 'tool'])
-            return f"tool: {value.get('tool')}, {params=}"
-        
+            return  listing_repr(value)
+        if 'results' in value:
+            params = (f"Description: {value.get('description')}, size: {value.get('size')}"
+                      f", max_price : {price_repr(value, price_key='max_price')}")
+            num = len(value.get('results'))
+            result_listings = ', '.join([listing_repr(v) for v in value.get('results')])
+            return params + f', results({num}): ' + result_listings
+
         keys = ", ".join(list(value)[:6])
         return f"dict with keys: {keys}"
 

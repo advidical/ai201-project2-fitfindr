@@ -317,6 +317,9 @@ Trace:
 **Diagnoses**
 
 No criterion was missed. Every criterion passed on all five tries, so there is no failure to place in a tool, the loop's branch, the session or the model's output, and no pattern across misses to look for.
+However, I do realize that criterion #5 was very easy to pass & while I made it to test the model, I should've
+known it wasn't an issue that I needed to worry about, so I'll rewrite criterion #5 to check matches & see if we got the best
+match based on closest match to description, then by lowest price available.
 
 ---
 
@@ -407,26 +410,26 @@ N/A
 
 ### Run Log — After
 
-| #   | Criterion                                   | Target | Verdict | How I decided                                                                                                                |
-| --- | ------------------------------------------- | ------ | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Matching query completes                    | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
-| 2   | Impossible query stops early                | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
-| 3   | State of selected item                      | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
-| 4   | Fit card gives unique, structured responses | 4 of 5 | MET     | Compared all five tries in the run log. all five fit cards were different strings and each named the price and platform once |
-| 5   | Item always respects price ceiling          | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
+| #   | Criterion                                                     | Target | Verdict | How I decided                                                                                                                |
+| --- | ------------------------------------------------------------- | ------ | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Matching query completes                                      | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
+| 2   | Impossible query stops early                                  | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
+| 3   | State of selected item                                        | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
+| 4   | Fit card gives unique, structured responses                   | 4 of 5 | MET     | Compared all five tries in the run log. all five fit cards were different strings and each named the price and platform once |
+| 5   | Item gets best match based on description, ties go to cheaper | 4 of 5 | MET     | Compared all five tries in the run log. 4 PASSED (4/5), which meets the target of 4 of 5.                                    |
 
 **Did it help, and how do I know:**
-N/A
+It helped actually understanding what my system does well & what could be tweaked a bit with how I am
+ranking my matches in search_listings.
 
 ---
 
 ## What's Still Broken
 
-Everything is working as intended. Just took longer than I thought because
-I forgot to add trace steps or name the step function call appropriately.
-Also would like to rewrite parsing of listings to use regex instead of splits
-and loop iteration. If I had more time I would've moved a second tool to mcp,
-& retries with looser constraints for size or price.
+Everything is working as intended. Would ideally want to tweak search_listings so that
+item queries matching style tags are stripped from consideration, so that an item that
+doesn't mention a specific style but has the style tag will be considered as a priority
+if it matches all other query requirements and is cheaper.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 

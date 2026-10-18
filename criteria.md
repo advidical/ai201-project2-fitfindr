@@ -73,15 +73,34 @@ in very similar answers.
 
 ---
 
-## 5. Respects price ceiling at all times
+## ~~ 5. Respects price ceiling at all times~~
 
-For any given user query, the top matching result (which will be passed to suggest_outfit)
-must be at most the specified price ceiling, ex. under $30 means price < $30, around $30 is price <= $30, etc.
-You compare that value to the max_price given in the top matching result - should be 5 out of 5 times
+~~For any given user query, the top matching result (which will be passed to suggest_outfit)~~
+~~must be at most the specified price ceiling, ex. under $30 means price < $30, around $30 is price <= $30, etc.~~
+~~You compare that value to the max_price given in the top matching result - should be 5 out of 5 times~~
+
+~~**Why this target:**~~
+~~I want to make sure that outfit requests are able to respect price ceiling at all times when given,~~
+~~especially because it requires just a simple check.~~
+
+**Revised in Unit 4**
+
+## 5. Item gets best match based on description, ties go to cheaper item
+
+For any given user query, We should do make sure our top result is the closest
+match we can have to our user's requirements for a clothing item, & for ties we
+give the cheapest item first. This should be accomplished at least 4 out of 5 times
 
 **Why this target:**
-I want to make sure that outfit requests are able to respect price ceiling at all times when given,
-especially because it requires just a simple check.
+I want to ensure as much as possible that we are getting the best match for our
+user requested item, while recognizing that it may be a bit subjective on what is
+the best match since there can be a disconnect when it comes to user preference, and
+also the fact the current algorithm will weigh matches with the title more than
+the style tags or description for queries that note a specific style (like Vintage)
+
+**Why the revision:**
+Realized my previous criteria was too easy of a bar to realize, so I went with
+getting the best match instead (hindsight is 20/20).
 
 ---
 

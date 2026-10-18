@@ -18,11 +18,6 @@ import trace
 from tools import search_listings, suggest_outfit, create_fit_card
 from generate import ModelUnavailable
 from mcp_client import call_tool
-
-
-# ── For tracing steps ─────────────────────────────────────────────────────────────
-def get_params(names:list[str], *args) -> dict:
-    return {name: value for name in names for value in args}
     
 
 # ── session state ─────────────────────────────────────────────────────────────
@@ -137,7 +132,7 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     results = call_tool("search_listings", parsed)
     # results = search_listings(description, size, max_price)
     session['search_results'] = results
-    search_params = get_params(['tool'], 'search_listings') | parsed
+    search_params = parsed | {'results': session['search_results']} 
     
     # Branch on tool result: no match => give user useful ways to broaden search
     # stop before the outfit / card fit tools
@@ -148,29 +143,28 @@ def run_agent(query: str, wardrobe: dict) -> dict:
             f"No items matched '{description}'{size_hint}{price_hint}. "
             "Try a broader description, a different size, or a higher price cap."
         )
-        trace.step('call_tool', search_params, None, "branch: empty, stopping")
+        trace.step('search_listings (via MCP)', search_params, None, "branch: empty, stopping")
         return session
 
     # 5. Choose an item — the first result is fine. Put it in
     #    session["selected_item"].
     session["selected_item"] = results[0]
-    trace.step('call_tool', search_params, session["selected_item"])
+    trace.step('search_listings (via MCP)', search_params, session["selected_item"])
 
     # 6. Call suggest_outfit() with the selected item and the wardrobe.
     #    Put the result in session["outfit_suggestion"].
-    suggest_outfit_params = get_params(['selected_item','wardrobe'], session["selected_item"], wardrobe)
+    suggest_outfit_params = {'selected_item': session["selected_item"], 'wardrobe': wardrobe}
     try:
         session['outfit_suggestion'] = suggest_outfit(session["selected_item"], wardrobe)
-
+        note = ""
         if not wardrobe["items"]:    
-            trace.step('suggest_outfit', suggest_outfit_params, session["outfit_suggestion"], 
-                    "Branch: No wardrobe, give general styling advice")
-        trace.step('suggest_outfit', suggest_outfit_params, session["outfit_suggestion"])
+            note = "Branch: No wardrobe, give general styling advice"
+        trace.step('suggest_outfit', suggest_outfit_params, session["outfit_suggestion"], note)
 
         # 7. Call create_fit_card() with the outfit and the item.
         #    Put the result in session["fit_card"].
         session['fit_card'] = create_fit_card(session["outfit_suggestion"], session["selected_item"])
-        fit_params = get_params(['outfit_suggestion', 'selected_item'], session["outfit_suggestion"], session["selected_item"])
+        fit_params = {'outfit_suggestion': session["outfit_suggestion"], 'selected_item': session["selected_item"]}
         trace.step('create_fit_card', fit_params, session["fit_card"])
 
     except ModelUnavailable as e:
