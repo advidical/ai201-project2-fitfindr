@@ -321,6 +321,10 @@ However, I do realize that criterion #5 was very easy to pass & while I made it 
 known it wasn't an issue that I needed to worry about, so I'll rewrite criterion #5 to check matches & see if we got the best
 match based on closest match to description, then by lowest price available.
 
+Also based on inspecting the code base, I suspect it would be worthwhile to convert the str split
+into a regex based split, especially for expanding it for specific edge cases (such as specifying
+size of item without the prefix word 'size').
+
 ---
 
 ## Loop Trace
@@ -403,10 +407,12 @@ full. -->
      `python run_eval.py --label after` -->
 
 **What I changed:**
-Didn't change anything since I passed all criteria before
+Fixed query parsing to use regex patterns instead of str split & looping, & I changed my criteria #5
+to look for best matches.
 
 **Which failure it was meant to fix:**
-N/A
+Fixing criteria #5 being too easy of a target to go for, new criterion #5 is more realistic
+& something someone actually would want to look for to consider this a working system.
 
 ### Run Log — After
 
@@ -424,12 +430,30 @@ ranking my matches in search_listings.
 
 ---
 
+## Stretch Features: Adding create_fit_card to MCP
+
+### Run Log — After Caption MCP implementation
+
+| #   | Criterion                                                     | Target | Verdict | How I decided                                                                                                                |
+| --- | ------------------------------------------------------------- | ------ | ------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Matching query completes                                      | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
+| 2   | Impossible query stops early                                  | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
+| 3   | State of selected item                                        | 5 of 5 | MET     | Compared all five tries in the run log. All five PASSED (5/5), which meets the target of 5 of 5.                             |
+| 4   | Fit card gives unique, structured responses                   | 4 of 5 | MET     | Compared all five tries in the run log. all five fit cards were different strings and each named the price and platform once |
+| 5   | Item gets best match based on description, ties go to cheaper | 4 of 5 | MET     | Compared all five tries in the run log. 4 PASSED (4/5), which meets the target of 4 of 5.                                    |
+
+### Did it improve anything?
+
+Well I don't think it improved token usage, as both w/ & w/o MCP with create_fit_card
+got 51 model calls & ~17700 prompt + ~4500 tokens. However, I did notice that rate limits were
+not as often hit with MCP implementation than without, so there could be a speed improvement.
+I would need to do more comprehensive testing though to confirm.
+
 ## What's Still Broken
 
-Everything is working as intended. Would ideally want to tweak search_listings so that
-item queries matching style tags are stripped from consideration, so that an item that
-doesn't mention a specific style but has the style tag will be considered as a priority
-if it matches all other query requirements and is cheaper.
+Nothing is broken, but I could improve the regex patterns to deal with size
+edge cases for when prefix 'size' is not given, so that a query like
+"M size Vintage jacket" or 'Large Vintage Tee' are parsed correctly.
 
 <!-- ═════════════════════════════════════════════════════════════════════
 

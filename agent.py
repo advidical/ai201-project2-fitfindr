@@ -85,43 +85,29 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     # 3. Parse the query into a description, a size, and a max_price. 
     # Parse with lightweight rules: size X & under $N,
     # and treat remaining words as item description
-    import re # for later to see about converting below using regex exp.
+    import re 
+    QUERY_PATTERN = re.compile(
+        r"\bsize\s+(?P<size>\S+)"
+        r"|\bunder\s+\$?(?P<under>\d+(?:\.\d+)?)[,.;]*"              
+        r"|(?<!\S)\$(?P<dollar>\d+(?:\.\d+)?)[,.;]*",                
+        re.IGNORECASE,
+    )
 
-    tokens = query.split()
-    desc_tokens = []
     size = None
     max_price = None
-    i = 0
-    while i < len(tokens):
-        token = tokens[i]
-        lower = token.lower().strip(",.;")
-        if lower == 'size' and i + 1 < len(tokens):
-            size = tokens[i+1].strip(",.;")
-            i+=2
-            continue
-        
-        if lower == 'under' and i + 1 < len(tokens):
-            price_token = tokens[i + 1].replace("$", "").strip(",.;")
-            try:
-                max_price = float(price_token)
-            except ValueError:
-                pass
-            i+=2
-            continue
 
-        # accounting for money amount at front of query
-        if lower.startswith("$"):
-            try:
-                max_price = float(lower[1:].strip(",.;"))
-            except ValueError:
-                desc_tokens.append(token)
-            i+=1
-            continue
-        desc_tokens.append(token)
-        i+=1
+    for match in QUERY_PATTERN.finditer(query):
+        if match.group("size") is not None:
+            size = match.group("size").strip(",.;")
+        elif match.group("under") is not None:
+            max_price = float(match.group("under"))
+        elif match.group("dollar") is not None:
+            max_price = float(match.group("dollar"))
 
-    description = " ".join(desc_tokens).strip()
-    parsed = {'description': description, 'size': size, 'max_price': max_price}
+    # Remove everything the pattern matched; what's left is the description
+    description = " ".join(QUERY_PATTERN.sub(" ", query).split())
+
+    parsed = {"description": description, "size": size, "max_price": max_price}
     session['parsed'] = parsed
 
     # 4. Call search_listings() with what you parsed.
@@ -157,15 +143,18 @@ def run_agent(query: str, wardrobe: dict) -> dict:
     try:
         session['outfit_suggestion'] = suggest_outfit(session["selected_item"], wardrobe)
         note = ""
-        if not wardrobe["items"]:    
+        if not (wardrobe or {}).get("items"):
             note = "Branch: No wardrobe, give general styling advice"
         trace.step('suggest_outfit', suggest_outfit_params, session["outfit_suggestion"], note)
 
         # 7. Call create_fit_card() with the outfit and the item.
         #    Put the result in session["fit_card"].
-        session['fit_card'] = create_fit_card(session["outfit_suggestion"], session["selected_item"])
-        fit_params = {'outfit_suggestion': session["outfit_suggestion"], 'selected_item': session["selected_item"]}
-        trace.step('create_fit_card', fit_params, session["fit_card"])
+        fit_params = {"outfit": session["outfit_suggestion"],
+                      "new_item": session["selected_item"],
+                     }
+        session['fit_card'] = call_tool("create_fit_card", fit_params)
+        # session['fit_card'] = create_fit_card(session['outfit_suggestion'], session['selected_item'])
+        trace.step('create_fit_card (via MCP)', fit_params, session["fit_card"])
 
     except ModelUnavailable as e:
         import traceback

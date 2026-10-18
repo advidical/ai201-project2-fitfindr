@@ -31,6 +31,10 @@ import json
 import sys
 from pathlib import Path
 
+import os, tempfile
+import config
+import generate
+
 SERVER = Path(__file__).parent / "mcp_server.py"
 
 
@@ -55,26 +59,50 @@ def call_tool(name: str, arguments: dict):
     Raises:
         MCPError, with something readable in it.
     """
+    fd, usage_path = tempfile.mkstemp(suffix=".jsonl")
+    os.close(fd)
     try:
-        return asyncio.run(_call(name, arguments))
+        return asyncio.run(_call(name, arguments, usage_path))
     except MCPError:
         raise
-    except Exception as exc:  # noqa: BLE001 — re-raised readably below
+    except Exception as exc:  # noqa: BLE001
         raise MCPError(
-            f"Couldn't call '{name}' over MCP: {exc}\n"
+            f"Couldn't call '{name}' over MCP: {_root(exc)}\n"
             f"Check that mcp_server.py runs on its own first:\n"
             f"    python mcp_server.py\n"
             f"If it exits immediately with an error, fix that before coming back here."
         ) from exc
+    finally:
+        _fold_usage(usage_path)
 
 
-async def _call(name: str, arguments: dict):
+def _fold_usage(path: str) -> None:
+    try:
+        for line in Path(path).read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                generate.add_usage(json.loads(line))
+    except (OSError, ValueError):
+        pass                            # missing usage must never break a good run
+    finally:
+        Path(path).unlink(missing_ok=True)
+
+
+def _root(exc):                         # unwraps the TaskGroup wrapper from last time
+    while getattr(exc, "exceptions", None):
+        exc = exc.exceptions[0]
+    return exc
+
+async def _call(name, arguments, usage_path):
     from mcp import ClientSession, StdioServerParameters
     from mcp.client.stdio import stdio_client
-
+    import os, config
+    
     params = StdioServerParameters(
         command=sys.executable,
         args=[str(SERVER)],
+        env={**os.environ,
+            "FITFINDR_USAGE_FILE": usage_path,
+            "AI201_CACHE": "1" if config.CACHE_ENABLED else "0"},
     )
 
     async with stdio_client(params) as (read, write):

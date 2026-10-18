@@ -59,7 +59,8 @@ works with a direct call, and **a documented failure earns the point in full.**
 
 from mcp.server.fastmcp import FastMCP
 
-from tools import search_listings as _search_listings_impl  # noqa: F401 — you'll use this below
+from tools import search_listings as _search_listings_impl
+from tools import create_fit_card as _create_fit_card_impl  # noqa: F401 — you'll use this below
 
 # log_level="WARNING" keeps the server from printing an INFO line for every
 # request. Without it your terminal fills with "Processing request of type
@@ -67,8 +68,7 @@ from tools import search_listings as _search_listings_impl  # noqa: F401 — you
 mcp = FastMCP("fitfindr", log_level="WARNING")
 
 
-# ── TODO: uncomment and fill this in ──────────────────────────────────────────
-#
+# Tool implementations 
 @mcp.tool()
 def search_listings(
     description: str,
@@ -81,6 +81,31 @@ def search_listings(
      matching listings.
     """
     return _search_listings_impl(description, size, max_price)
+
+import json, os
+import generate
+
+def _report_usage(before: dict) -> None:
+    path = os.getenv("FITFINDR_USAGE_FILE")
+    if not path:                       
+        return
+    after = generate.snapshot()
+    delta = {k: after[k] - before[k] for k in after}
+    with open(path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(delta) + "\n")
+
+@mcp.tool()
+def create_fit_card(outfit: str, new_item: dict) -> str:
+    """
+    Generates caption (2-4 sentences) for clothing item & outfit vibes
+    Note: if outfit is empty or just whitespace, returns descriptive msg
+    rather raising an exception.
+    """
+    before = generate.snapshot()
+    try:
+        return _create_fit_card_impl(outfit, new_item)
+    finally:                           # also report calls that failed partway
+        _report_usage(before)
 #
 # ──────────────────────────────────────────────────────────────────────────────
 #

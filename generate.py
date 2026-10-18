@@ -137,6 +137,20 @@ def _check_budget() -> None:
         f"raise the number in config.py — but look first."
     )
 
+def snapshot() -> dict:
+    """Current counters, so a caller can work out what one call spent."""
+    return {"calls": _session_calls, "cache_hits": _cache_hits,
+            "prompt": _prompt_tokens, "output": _output_tokens}
+
+
+def add_usage(delta: dict) -> None:
+    """Fold in usage that happened in another process (e.g. the MCP server)."""
+    global _session_calls, _cache_hits, _prompt_tokens, _output_tokens
+    _session_calls += delta.get("calls", 0)
+    _cache_hits    += delta.get("cache_hits", 0)
+    _prompt_tokens += delta.get("prompt", 0)
+    _output_tokens += delta.get("output", 0)
+
 
 def usage() -> str:
     """One line on what this session has spent. Printed by app.py on exit."""
